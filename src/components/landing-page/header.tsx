@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -50,7 +51,7 @@ export default function Header() {
               key={item.id}
               variant="ghost"
               onClick={() => scrollToSection(item.id)}
-              className="text-foreground hover:text-primary transition-colors"
+              className="text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
             >
               {item.label}
             </Button>
@@ -78,7 +79,7 @@ export default function Header() {
               key={item.id}
               variant="ghost"
               onClick={() => scrollToSection(item.id)}
-              className="block w-full text-left justify-start text-foreground hover:text-primary transition-colors"
+              className="block w-full text-left justify-start text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
             >
               {item.label}
             </Button>
@@ -88,3 +89,4 @@ export default function Header() {
     </header>
   );
 }
+
