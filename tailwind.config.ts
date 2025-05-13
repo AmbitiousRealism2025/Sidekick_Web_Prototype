@@ -59,7 +59,10 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+        // Custom gradient colors
+        'purple-600': '#7C3AED', // Example purple for gradient
+        'blue-500': '#3B82F6', // Example blue for gradient
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
