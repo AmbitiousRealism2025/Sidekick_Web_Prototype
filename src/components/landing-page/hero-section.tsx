@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -10,19 +9,23 @@ export default function HeroSection() {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Initialize with default transforms or null
-  const [rotateX, setRotateX] = useState<MotionValue<number> | null>(null);
-  const [rotateY, setRotateY] = useState<MotionValue<number> | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  // Initialize input ranges with placeholder values
+  const [inputRangeX, setInputRangeX] = useState([-100, 100]);
+  const [inputRangeY, setInputRangeY] = useState([-100, 100]);
 
   useEffect(() => {
     setIsMounted(true);
-    // Adjust sensitivity by changing the output range
-    // This code will only run on the client side
-    setRotateX(useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [10, -10]));
-    setRotateY(useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-10, 10]));
-  }, [x, y]); // Add x and y as dependencies if they are used to initialize useTransform elsewhere or if their changes should re-trigger this effect.
+    // Update input ranges once window object is available
+    if (typeof window !== "undefined") {
+      setInputRangeX([-window.innerWidth / 2, window.innerWidth / 2]);
+      setInputRangeY([-window.innerHeight / 2, window.innerHeight / 2]);
+    }
+  }, []); // Empty dependency array ensures this runs once on mount
 
+  // Define transforms at the top level using state-managed input ranges
+  const rotateX = useTransform(y, inputRangeY, [10, -10]);
+  const rotateY = useTransform(x, inputRangeX, [-10, 10]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!isMounted) return;
@@ -40,26 +43,29 @@ export default function HeroSection() {
   };
 
   return (
-    <section 
-      id="hero" 
+    <section
+      id="hero"
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500/10 to-primary/10 px-6 py-20 relative overflow-hidden"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       <div className="absolute inset-0 opacity-10">
-        <Image 
-          src="https://picsum.photos/seed/hero-bg/1920/1080" 
-          alt="Abstract background texture" 
+        <Image
+          src="https://picsum.photos/seed/hero-bg/1920/1080"
+          alt="Abstract background texture"
           fill
-          objectFit="cover" 
+          objectFit="cover"
           priority
           data-ai-hint="abstract texture"
         />
       </div>
       <motion.div
-        style={{ 
+        // Apply rotations directly; they are MotionValues.
+        // Conditionally apply if initial placeholder ranges cause visual issues,
+        // but direct application is often fine as ranges update quickly.
+        style={{
           perspective: 1000,
-          ...(isMounted && rotateX && rotateY ? { rotateX, rotateY } : {}) 
+          ...(isMounted ? { rotateX, rotateY } : {}) // Apply rotations only when mounted and ranges are set
         }}
         className="max-w-4xl mx-auto text-center z-10 p-8 rounded-xl bg-background/10 backdrop-blur-sm shadow-2xl"
       >
@@ -70,12 +76,15 @@ export default function HeroSection() {
         <p className="text-muted-foreground mb-10 max-w-2xl mx-auto">
           The revolutionary inflatable therapy table that combines extreme portability with professional-grade stability and durability.
         </p>
-        <Button 
+        <Button
           size="lg"
           onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-            (e as any).preventDefault(); 
             const problemSection = document.getElementById('problem');
             if (problemSection) {
+              // Check if it's an anchor to prevent default, otherwise let button behave normally
+              if ((e.target as HTMLElement).closest('a')) {
+                e.preventDefault();
+              }
               problemSection.scrollIntoView({ behavior: 'smooth' });
             }
           }}
@@ -90,4 +99,3 @@ export default function HeroSection() {
     </section>
   );
 }
-
