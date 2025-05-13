@@ -2,52 +2,48 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { useMotionValue, useTransform, motion, MotionValue } from 'framer-motion';
-import { useEffect, useState } from 'react';
+// Removed motion imports as they are no longer needed for this component's parallax
+// import { useMotionValue, useTransform, motion, MotionValue } from 'framer-motion';
+// import { useEffect, useState } from 'react'; // useEffect and useState for parallax are removed
 
 export default function HeroSection() {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  // Removed all state and hooks related to mouse-move parallax effect
+  // const x = useMotionValue(0);
+  // const y = useMotionValue(0);
+  // const [rotateX, setRotateX] = useState<MotionValue<number>>(useMotionValue(0));
+  // const [rotateY, setRotateY] = useState<MotionValue<number>>(useMotionValue(0));
+  // const [isMounted, setIsMounted] = useState(false);
 
-  const [isMounted, setIsMounted] = useState(false);
-  // Initialize input ranges with placeholder values
-  const [inputRangeX, setInputRangeX] = useState([-100, 100]);
-  const [inputRangeY, setInputRangeY] = useState([-100, 100]);
+  // useEffect(() => {
+  //   setIsMounted(true);
+  //   if (typeof window !== "undefined") {
+  //   setRotateX(useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [10, -10]));
+  //   setRotateY(useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-10, 10]));
+  //   }
+  // }, [x, y]);
 
-  useEffect(() => {
-    setIsMounted(true);
-    // Update input ranges once window object is available
-    if (typeof window !== "undefined") {
-      setInputRangeX([-window.innerWidth / 2, window.innerWidth / 2]);
-      setInputRangeY([-window.innerHeight / 2, window.innerHeight / 2]);
-    }
-  }, []); // Empty dependency array ensures this runs once on mount
+  // const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //   if (!isMounted) return;
+  //   const rect = event.currentTarget.getBoundingClientRect();
+  //   const elementX = event.clientX - rect.left;
+  //   const elementY = event.clientY - rect.top;
+  //   x.set(elementX - rect.width / 2);
+  //   y.set(elementY - rect.height / 2);
+  // };
 
-  // Define transforms at the top level using state-managed input ranges
-  const rotateX = useTransform(y, inputRangeY, [10, -10]);
-  const rotateY = useTransform(x, inputRangeX, [-10, 10]);
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!isMounted) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const elementX = event.clientX - rect.left;
-    const elementY = event.clientY - rect.top;
-    x.set(elementX - rect.width / 2);
-    y.set(elementY - rect.height / 2);
-  };
-
-  const handleMouseLeave = () => {
-    if (!isMounted) return;
-    x.set(0);
-    y.set(0);
-  };
+  // const handleMouseLeave = () => {
+  //   if (!isMounted) return;
+  //   x.set(0);
+  //   y.set(0);
+  // };
 
   return (
     <section
       id="hero"
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500/10 to-primary/10 px-6 py-20 relative overflow-hidden"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      // Removed mouse move event handlers
+      // onMouseMove={handleMouseMove}
+      // onMouseLeave={handleMouseLeave}
     >
       <div className="absolute inset-0 opacity-10">
         <Image
@@ -59,14 +55,13 @@ export default function HeroSection() {
           data-ai-hint="abstract texture"
         />
       </div>
-      <motion.div
-        // Apply rotations directly; they are MotionValues.
-        // Conditionally apply if initial placeholder ranges cause visual issues,
-        // but direct application is often fine as ranges update quickly.
-        style={{
-          perspective: 1000,
-          ...(isMounted ? { rotateX, rotateY } : {}) // Apply rotations only when mounted and ranges are set
-        }}
+      {/* Changed motion.div to div and removed dynamic style for rotation */}
+      <div
+        // style={{ // Removed dynamic styles for parallax
+        //   perspective: 1000,
+        //   rotateX: isMounted ? rotateX : 0,
+        //   rotateY: isMounted ? rotateY : 0,
+        // }}
         className="max-w-4xl mx-auto text-center z-10 p-8 rounded-xl bg-background/10 backdrop-blur-sm shadow-2xl"
       >
         <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
@@ -95,7 +90,7 @@ export default function HeroSection() {
             Learn More / Explore Sidekick AIR
           </a>
         </Button>
-      </motion.div>
+      </div>
     </section>
   );
 }
