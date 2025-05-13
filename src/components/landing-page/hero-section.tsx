@@ -1,16 +1,9 @@
+"use client";
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 export default function HeroSection() {
-  // Client-side scroll initiation for the button
-  const handleScrollToProblem = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    const problemSection = document.getElementById('problem');
-    if (problemSection) {
-      problemSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-  
   return (
     <section id="hero" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500/10 to-primary/10 px-6 py-20 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -33,9 +26,10 @@ export default function HeroSection() {
         </p>
         <Button 
           size="lg"
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
             // Prevent default if it's an anchor, then scroll
-            e.preventDefault();
+            // Cast event to any if type issues persist with asChild and anchor
+            (e as any).preventDefault(); 
             const problemSection = document.getElementById('problem');
             if (problemSection) {
               problemSection.scrollIntoView({ behavior: 'smooth' });
