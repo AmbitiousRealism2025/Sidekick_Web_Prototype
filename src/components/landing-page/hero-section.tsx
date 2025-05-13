@@ -1,19 +1,31 @@
+
 "use client";
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { useMotionValue, useTransform, motion } from 'framer-motion';
+import { useMotionValue, useTransform, motion, MotionValue } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 export default function HeroSection() {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Adjust sensitivity by changing the output range
-  const rotateX = useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [10, -10]);
-  const rotateY = useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-10, 10]);
+  // Initialize with default transforms or null
+  const [rotateX, setRotateX] = useState<MotionValue<number> | null>(null);
+  const [rotateY, setRotateY] = useState<MotionValue<number> | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    // Adjust sensitivity by changing the output range
+    // This code will only run on the client side
+    setRotateX(useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [10, -10]));
+    setRotateY(useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-10, 10]));
+  }, [x, y]); // Add x and y as dependencies if they are used to initialize useTransform elsewhere or if their changes should re-trigger this effect.
 
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!isMounted) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const elementX = event.clientX - rect.left;
     const elementY = event.clientY - rect.top;
@@ -22,6 +34,7 @@ export default function HeroSection() {
   };
 
   const handleMouseLeave = () => {
+    if (!isMounted) return;
     x.set(0);
     y.set(0);
   };
@@ -37,15 +50,18 @@ export default function HeroSection() {
         <Image 
           src="https://picsum.photos/seed/hero-bg/1920/1080" 
           alt="Abstract background texture" 
-          fill // Changed layout="fill" to fill
+          fill
           objectFit="cover" 
           priority
           data-ai-hint="abstract texture"
         />
       </div>
       <motion.div
-        style={{ x, y, rotateX, rotateY, perspective: 1000 }} // Added perspective for 3D effect
-        className="max-w-4xl mx-auto text-center z-10 p-8 rounded-xl bg-background/10 backdrop-blur-sm shadow-2xl" // Added some styling to the motion div
+        style={{ 
+          perspective: 1000,
+          ...(isMounted && rotateX && rotateY ? { rotateX, rotateY } : {}) 
+        }}
+        className="max-w-4xl mx-auto text-center z-10 p-8 rounded-xl bg-background/10 backdrop-blur-sm shadow-2xl"
       >
         <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
           Sidekick AIR: The Future of Portable Therapy Tables
@@ -74,3 +90,4 @@ export default function HeroSection() {
     </section>
   );
 }
+
