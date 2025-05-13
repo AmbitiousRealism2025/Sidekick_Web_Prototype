@@ -105,5 +105,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans), var(--font-geist-mono), Arial, Helvetica, sans-serif;
   }
 }
