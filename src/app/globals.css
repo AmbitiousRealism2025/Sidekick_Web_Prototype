@@ -51,6 +51,9 @@ body {
     --sidebar-accent-foreground: 0 0% 100%; /* White */
     --sidebar-border: 220 15% 85%; /* Light border */
     --sidebar-ring: 230 70% 55%; /* Indigo */
+
+    --gradient-blue: 217 90% 61%;
+    --gradient-purple: 262 80% 58%;
   }
 
   .dark {
@@ -96,6 +99,9 @@ body {
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 220 10% 30%;
     --sidebar-ring: 230 70% 65%;
+
+    --gradient-blue: 217 90% 66%; /* Brighter blue for dark mode */
+    --gradient-purple: 262 80% 63%; /* Brighter purple for dark mode */
   }
 }
 

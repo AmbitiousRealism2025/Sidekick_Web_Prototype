@@ -2,48 +2,48 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-// Removed motion imports as they are no longer needed for this component's parallax
-// import { useMotionValue, useTransform, motion, MotionValue } from 'framer-motion';
-// import { useEffect, useState } from 'react'; // useEffect and useState for parallax are removed
+import { useMotionValue, useTransform, motion, MotionValue } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 export default function HeroSection() {
-  // Removed all state and hooks related to mouse-move parallax effect
-  // const x = useMotionValue(0);
-  // const y = useMotionValue(0);
-  // const [rotateX, setRotateX] = useState<MotionValue<number>>(useMotionValue(0));
-  // const [rotateY, setRotateY] = useState<MotionValue<number>>(useMotionValue(0));
-  // const [isMounted, setIsMounted] = useState(false);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [rotateX, setRotateX] = useState<MotionValue<number>>(useMotionValue(0));
+  const [rotateY, setRotateY] = useState<MotionValue<number>>(useMotionValue(0));
+  const [isMounted, setIsMounted] = useState(false);
 
-  // useEffect(() => {
-  //   setIsMounted(true);
-  //   if (typeof window !== "undefined") {
-  //   setRotateX(useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [10, -10]));
-  //   setRotateY(useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-10, 10]));
-  //   }
-  // }, [x, y]);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []); // Ensure this runs only once on mount
 
-  // const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //   if (!isMounted) return;
-  //   const rect = event.currentTarget.getBoundingClientRect();
-  //   const elementX = event.clientX - rect.left;
-  //   const elementY = event.clientY - rect.top;
-  //   x.set(elementX - rect.width / 2);
-  //   y.set(elementY - rect.height / 2);
-  // };
+  useEffect(() => {
+    if (typeof window !== "undefined" && isMounted) { // check isMounted here
+      setRotateX(useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [5, -5])); // Reduced sensitivity
+      setRotateY(useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-5, 5])); // Reduced sensitivity
+    }
+  }, [x, y, isMounted]); // Added isMounted to dependency array
 
-  // const handleMouseLeave = () => {
-  //   if (!isMounted) return;
-  //   x.set(0);
-  //   y.set(0);
-  // };
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!isMounted) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const elementX = event.clientX - rect.left;
+    const elementY = event.clientY - rect.top;
+    x.set(elementX - rect.width / 2);
+    y.set(elementY - rect.height / 2);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMounted) return;
+    x.set(0);
+    y.set(0);
+  };
 
   return (
     <section
       id="hero"
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500/10 to-primary/10 px-6 py-20 relative overflow-hidden"
-      // Removed mouse move event handlers
-      // onMouseMove={handleMouseMove}
-      // onMouseLeave={handleMouseLeave}
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gradient-blue/15 to-primary/15 px-6 py-20 relative overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="absolute inset-0 opacity-10">
         <Image
@@ -55,13 +55,12 @@ export default function HeroSection() {
           data-ai-hint="abstract texture"
         />
       </div>
-      {/* Changed motion.div to div and removed dynamic style for rotation */}
-      <div
-        // style={{ // Removed dynamic styles for parallax
-        //   perspective: 1000,
-        //   rotateX: isMounted ? rotateX : 0,
-        //   rotateY: isMounted ? rotateY : 0,
-        // }}
+      <motion.div
+        style={{
+          perspective: 1000,
+          rotateX: isMounted ? rotateX : 0,
+          rotateY: isMounted ? rotateY : 0,
+        }}
         className="max-w-4xl mx-auto text-center z-10 p-8 rounded-xl bg-background/10 backdrop-blur-sm shadow-2xl"
       >
         <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
@@ -83,7 +82,7 @@ export default function HeroSection() {
               problemSection.scrollIntoView({ behavior: 'smooth' });
             }
           }}
-          className="bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+          className="bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:brightness-105"
           asChild
         >
           <a href="#problem">

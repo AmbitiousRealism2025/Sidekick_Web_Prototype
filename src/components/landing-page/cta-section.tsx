@@ -30,7 +30,7 @@ export default function CtaSection() {
   };
 
   return (
-    <section id="cta" className="py-20 bg-gradient-to-br from-primary to-purple-600 text-primary-foreground">
+    <section id="cta" className="py-20 bg-gradient-to-br from-primary to-gradient-purple text-primary-foreground">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Be the First to Know When Sidekick AIR Launches</h2>
         <p className="text-lg mb-10 max-w-2xl mx-auto text-primary-foreground/90">
@@ -49,7 +49,7 @@ export default function CtaSection() {
           <Button
             type="submit"
             size="lg"
-            className="px-8 py-4 bg-background text-primary rounded-full font-semibold shadow-lg hover:bg-background/90 transition-colors"
+            className="px-8 py-4 bg-background text-primary rounded-full font-semibold shadow-lg hover:bg-background/90 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-md"
           >
             Sign Up for Updates
           </Button>
