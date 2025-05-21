@@ -2,29 +2,60 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { useMotionValue, useTransform, motion, MotionValue } from 'framer-motion';
+import { useMotionValue, useTransform, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 export default function HeroSection() {
+  const [isMounted, setIsMounted] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowHeight, setWindowHeight] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      setWindowHeight(window.innerHeight);
+    };
+
+    if (typeof window !== "undefined") {
+      handleResize(); // Set initial values
+      window.addEventListener('resize', handleResize);
+    }
+    
+    setIsMounted(true); 
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener('resize', handleResize);
+      }
+    };
+  }, []);
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const [rotateX, setRotateX] = useState<MotionValue<number>>(useMotionValue(0));
-  const [rotateY, setRotateY] = useState<MotionValue<number>>(useMotionValue(0));
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []); // Ensure this runs only once on mount
+  // Define rotateX and rotateY using useTransform.
+  // Fallback to default values if window dimensions are not yet available or are zero.
+  const rotateX_sensitivity = 5;
+  const rotateY_sensitivity = 5;
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && isMounted) { // check isMounted here
-      setRotateX(useTransform(y, [-window.innerHeight / 2, window.innerHeight / 2], [5, -5])); // Reduced sensitivity
-      setRotateY(useTransform(x, [-window.innerWidth / 2, window.innerWidth / 2], [-5, 5])); // Reduced sensitivity
-    }
-  }, [x, y, isMounted]); // Added isMounted to dependency array
+  const currentWindowHeight = windowHeight || 1080; // Default to 1080 if 0
+  const currentWindowWidth = windowWidth || 1920;   // Default to 1920 if 0
+  
+  const rotateX = useTransform(
+    y,
+    [-currentWindowHeight / 2, currentWindowHeight / 2],
+    [rotateX_sensitivity, -rotateX_sensitivity]
+  );
+
+  const rotateY = useTransform(
+    x,
+    [-currentWindowWidth / 2, currentWindowWidth / 2],
+    [-rotateY_sensitivity, rotateY_sensitivity]
+  );
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!isMounted) return;
+    // isMounted check is technically not needed here if x/y are always valid MotionValues
+    // but doesn't hurt. The main guard is for rotateX/Y in the style prop.
     const rect = event.currentTarget.getBoundingClientRect();
     const elementX = event.clientX - rect.left;
     const elementY = event.clientY - rect.top;
@@ -33,7 +64,7 @@ export default function HeroSection() {
   };
 
   const handleMouseLeave = () => {
-    if (!isMounted) return;
+    // isMounted check is technically not needed here if x/y are always valid MotionValues
     x.set(0);
     y.set(0);
   };
@@ -58,8 +89,9 @@ export default function HeroSection() {
       <motion.div
         style={{
           perspective: 1000,
-          rotateX: isMounted ? rotateX : 0,
-          rotateY: isMounted ? rotateY : 0,
+          // Guard against applying rotation if dimensions aren't set, to prevent initial weird state
+          rotateX: isMounted && windowWidth > 0 && windowHeight > 0 ? rotateX : 0,
+          rotateY: isMounted && windowWidth > 0 && windowHeight > 0 ? rotateY : 0,
         }}
         className="max-w-4xl mx-auto text-center z-10 p-8 rounded-xl bg-background/10 backdrop-blur-sm shadow-2xl"
       >
@@ -89,7 +121,7 @@ export default function HeroSection() {
             Learn More / Explore Sidekick AIR
           </a>
         </Button>
-      </div>
+      </motion.div>
     </section>
   );
 }

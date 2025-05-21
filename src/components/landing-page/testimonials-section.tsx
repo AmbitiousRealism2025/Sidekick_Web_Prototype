@@ -53,7 +53,7 @@ export default function TestimonialsSection() {
                 <Card className="h-full flex flex-col justify-between shadow-lg bg-card"> {/* Added shadow and bg-card */}
                   <CardContent className="p-6 text-center flex flex-col flex-grow justify-between"> {/* Ensure content fills card */}
                     <div> {/* Wrapper for quote to separate from name/title for spacing */}
-                      <p className="text-lg italic text-foreground/90 mb-6">"{testimonial.quote}"</p> {/* Increased bottom margin */}
+                      <p className="text-lg italic text-foreground/90 mb-6">&quot;{testimonial.quote}&quot;</p> {/* Increased bottom margin */}
                     </div>
                     <div>
                       <p className="font-semibold text-primary">{testimonial.name}</p>
